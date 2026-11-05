@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=no">
+  <meta name="theme-color" content="#14532d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Chelito Hogar · Para Kendis con Amor</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            chelito: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              500: '#15803d',
+              600: '#166534',
+              700: '#14532d',
+              800: '#0f3f22',
+            },
+            warm: {
+              50: '#fdfbf7',
+              100: '#fbf7ee',
+              200: '#f6eedb',
+              800: '#78350f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Permite scroll natural y fluido en móviles y computadoras */
+    html, body {
+      min-height: 100%;
+      height: auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background-color: #f6f8f5;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Input de número sin flechas para mayor limpieza */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* Animación suave para modales y notificaciones */
+    .fade-enter {
+      animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="text-stone-800 antialiased font-sans selection:bg-emerald-200">
+
+  <!-- Contenedor Principal: Centrado en PC como teléfono/app elegante, pantalla completa en móvil -->
+  <div class="min-h-screen max-w-xl mx-auto flex flex-col bg-warm-50 shadow-2xl border-x border-stone-200/70">
+    
+    <!-- Encabezado cálido -->
+    <header class="bg-chelito-700 text-white pt-6 pb-6 px-5 rounded-b-[2rem] shadow-md relative">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl bg-white/20 p-2 rounded-2xl backdrop-blur-sm">🌱</span>
+          <div>
+            <h1 class="font-extrabold text-xl tracking-tight text-white flex items-center gap-1.5">
+              Chelito Hogar
+              <span class="text-[10px] bg-emerald-300 text-chelito-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">RD</span>
+            </h1>
+            <p class="text-emerald-100 text-xs">Paz mental y cada chele en su lugar</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Botón de Notificaciones / Campana -->
+          <button onclick="requestNotificationPermission()" id="btnNotify" class="p-2 bg-white/10 hover:bg-white/20 border border-white/25 rounded-full text-white transition active:scale-95" title="Activar recordatorios">
+            <i data-lucide="bell" class="w-4 h-4 text-emerald-100"></i>
+          </button>
+
+          <!-- Botón para cambiar nombre o ver mensaje -->
+          <button onclick="openNameModal()" class="flex items-center gap-1 bg-white/10 hover:bg-white/20 border border-white/25 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-50 transition active:scale-95">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            <span id="headerNameDisplay">Kendis</span>
+            <i data-lucide="edit-2" class="w-3 h-3 text-emerald-200"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Saludo Personalizado para Kendis -->
+      <div class="mt-4 bg-emerald-800/60 border border-emerald-500/30 rounded-2xl p-4">
+        <div class="flex items-start gap-3">
+          <div class="text-2xl pt-0.5">☕</div>
+          <div>
+            <h2 class="font-bold text-lg text-white" id="greetingTitle">¡Hola, Kendis!</h2>
+            <p class="text-emerald-100 text-sm leading-snug mt-0.5">
+              Aquí no hay apuro ni enredos. Lo que entra, lo que sale y tu tranquilidad siempre visible.
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner de Recordatorios de Pagos Pendientes -->
+    <div id="reminderAlertBanner" class="hidden mx-4 mt-4 p-3 bg-amber-500 text-white rounded-2xl shadow-sm flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🔔</span>
+        <div>
+          <p class="text-xs font-bold leading-tight" id="reminderAlertText">Tienes cuentas pendientes por pagar</p>
+          <p class="text-[10px] text-amber-100">Toca para revisar tus compromisos</p>
+        </div>
+      </div>
+      <button onclick="checkRemindersNow()" class="text-xs bg-white text-amber-900 font-bold px-3 py-1 rounded-full shadow-sm">
+        Ver
+      </button>
+    </div>
+
+    <!-- Contenido Scrollable Natural -->
+    <main class="flex-1 px-4 py-6 space-y-6">
+
+      <!-- Carta Emotiva / Nota especial -->
+      <section class="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+        <div class="flex items-start gap-3">
+          <span class="text-2xl">💌</span>
+          <div class="flex-1">
+            <h3 class="font-bold text-stone-900 text-base flex items-center justify-between">
+              <span>Para ti, con todo cariño</span>
+              <button onclick="toggleLetter()" id="btnToggleLetter" class="text-xs text-amber-800 font-semibold underline ml-2">
+                Ocultar
+              </button>
+            </h3>
+            <div id="letterBody" class="mt-2 text-stone-700 text-sm italic font-serif leading-relaxed">
+              "Mami, nadie nace sabiendo finanzas y nunca se está vieja para tener paz mental. La gente no se desorganiza porque no quiera, sino porque las calculadoras y los bancos lo hacen todo confuso a propósito.<br><br>
+              Aquí no tienes que ser contadora: pones lo que entra al mes, le das un clic a lo que gastaste en la comida o la luz, y la app te dice exactamente con cuánto cuentas sin que te lleves sorpresas."
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel Freelancer: Saldo Actual Disponible y Termómetro de Cuentas Fijas -->
+      <section class="space-y-3">
+        <!-- Saldo Disponible Actual -->
+        <div class="bg-white border-2 border-emerald-600/30 rounded-3xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5 text-xs font-bold text-stone-500 uppercase tracking-wider">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ¿Cuánto dinero tienes hoy?
+            </div>
+            <button onclick="openSetBalanceModal()" class="text-xs font-semibold text-chelito-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-full transition">
+              Ajustar Saldo
+            </button>
+          </div>
+
+          <div class="flex items-baseline justify-between">
+            <div>
+              <p class="text-xs text-stone-400">Banco + Efectivo disponible</p>
+              <h2 class="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight mt-0.5" id="displayCurrentBalance">
+                RD$ 0
+              </h2>
+            </div>
+            <button onclick="openAddIncomeModal()" class="flex items-center gap-1.5 bg-chelito-600 hover:bg-chelito-700 text-white font-bold text-xs sm:text-sm px-3.5 py-2.5 rounded-2xl shadow transition active:scale-95">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              Cobré dinero
+            </button>
+          </div>
+        </div>
+
+        <!-- Termómetro para Abogada Freelancer -->
+        <div id="freelanceStatusCard" class="p-4 rounded-2xl border transition-all duration-300">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl pt-0.5" id="statusEmoji">⚖️</span>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-sm" id="statusTitle">Analizando tus cuentas del mes...</h3>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full" id="statusBadge">--</span>
+              </div>
+              <p class="text-xs mt-1 leading-relaxed" id="statusDescription">
+                Cargando estado...
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cuentas Fijas Obligatorias del Mes -->
+      <section class="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm" id="seccionFijos">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-base font-bold text-stone-900 flex items-center gap-2">
+              <span class="text-amber-600 text-lg">📌</span>
+              Cuentas Fijas del Mes
+            </h2>
+            <p class="text-xs text-stone-500">Toca para marcar lo que ya pagaste</p>
+          </div>
+          <button onclick="openAddFixedModal()" class="text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold px-2.5 py-1.5 rounded-lg border border-stone-300 flex items-center gap-1 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Agregar Fijo
+          </button>
+        </div>
+
+        <!-- Resumen de fijos pendientes vs cubiertos -->
+        <div class="grid grid-cols-2 gap-2 my-3 p-3 bg-stone-50 rounded-xl border border-stone-200/80 text-xs">
+          <div>
+            <span class="text-stone-400 block font-medium">Meta fija del mes:</span>
+            <span class="font-extrabold text-stone-800 text-sm" id="totalFixedAmount">RD$ 0</span>
+          </div>
+          <div class="text-right">
+            <span class="text-stone-400 block font-medium">Por pagar todavía:</span>
+            <span class="font-extrabold text-rose-600 text-sm" id="pendingFixedAmount">RD$ 0</span>
+          </div>
+        </div>
+
+        <div class="divide-y divide-stone-100" id="fixedExpensesList">
+          <!-- Lista de fijos cargada por JS -->
+        </div>
+      </section>
+
+      <!-- Botón de Registro Rápido: Anotar un Gasto del Día a Día -->
+      <section class="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <span class="bg-emerald-100 text-emerald-700 p-1.5 rounded-xl text-lg">⚡</span>
+            Anotar Gasto del Día a Día
+          </h2>
+          <span class="text-xs text-stone-400">Super, pasaje, antojito</span>
+        </div>
+
+        <!-- Formulario sencillo -->
+        <form id="quickExpenseForm" onsubmit="handleQuickExpense(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 uppercase mb-1">
+              ¿Cuánto pagaste? (RD$)
+            </label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-stone-400">RD$</span>
+              <input 
+                type="number" 
+                id="expenseAmount" 
+                inputmode="decimal" 
+                placeholder="0.00" 
+                required 
+                class="w-full bg-stone-50 border-2 border-stone-200 focus:border-chelito-600 focus:bg-white rounded-xl py-3.5 pl-14 pr-4 text-2xl font-bold text-stone-800 outline-none transition"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-600 uppercase mb-1.5">
+              ¿En qué se fue?
+            </label>
+            <div class="grid grid-cols-3 gap-2" id="categoryButtonsContainer"></div>
+            <input type="hidden" id="selectedCategory" value="Supermercado">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-600 uppercase mb-1">
+              Detalle o lugar <span class="font-normal text-stone-400">(Opcional)</span>
+            </label>
+            <input 
+              type="text" 
+              id="expenseNote" 
+              placeholder="Ej: Bravo, colmado, Uber, farmacia..."
+              class="w-full bg-stone-50 border border-stone-200 focus:border-chelito-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-sm text-stone-800 outline-none transition"
+            >
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full py-4 bg-chelito-600 hover:bg-chelito-700 active:scale-[0.99] text-white font-extrabold text-lg rounded-xl shadow-md transition flex items-center justify-center gap-2"
+          >
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            Guardar y Descontar
+          </button>
+        </form>
+      </section>
+
+      <!-- Movimientos Recientes -->
+      <section class="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-bold text-stone-900 flex items-center gap-2">
+              <i data-lucide="receipt" class="w-4 h-4 text-stone-600"></i>
+              Movimientos Recientes
+            </h2>
+            <p class="text-xs text-stone-500">Todo lo que entra y sale queda registrado</p>
+          </div>
+          <span class="text-xs font-semibold bg-stone-100 text-stone-600 px-2 py-1 rounded-md" id="recordsBadge">0 items</span>
+        </div>
+
+        <div id="expenseHistoryList" class="space-y-2.5"></div>
+
+        <div id="emptyHistoryNotice" class="hidden py-8 text-center text-stone-400">
+          <div class="text-4xl mb-2">🧺</div>
+          <p class="text-sm font-medium">Aún no hay movimientos anotados.</p>
+          <p class="text-xs text-stone-400">Anota tus cobros o gastos cuando los hagas.</p>
+        </div>
+      </section>
+
+      <!-- Herramientas familiares -->
+      <section class="bg-stone-100/70 rounded-2xl p-4 border border-stone-200 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-stone-600 uppercase tracking-wider">Opciones del Hogar</span>
+          <span class="text-xs text-emerald-700 font-semibold">Guardado seguro en tu teléfono</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button onclick="backupData()" class="bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 py-2.5 px-3 rounded-xl font-medium flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-stone-500"></i> Copiar Respaldo
+          </button>
+          <button onclick="openResetModal()" class="bg-white hover:bg-rose-50 border border-stone-200 text-rose-600 py-2.5 px-3 rounded-xl font-medium flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-rose-500"></i> Limpiar Historial
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Pie de página cariñoso -->
+    <footer class="p-6 text-center text-stone-500 text-xs border-t border-stone-200/80 bg-stone-50 mt-auto">
+      <p class="font-medium text-stone-700">Chelito Hogar · Creado con amor para Kendis</p>
+      <p class="text-[11px] text-stone-400 mt-1">Tus números no van a ningún banco ni internet, se quedan en tu celular 🇩🇴</p>
+    </footer>
+
+  </div>
+
+  <!-- ==================== MODALES ACCESIBLES ==================== -->
+
+  <!-- Modal: Cobré dinero -->
+  <div id="addIncomeModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl fade-enter border border-stone-100">
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 bg-emerald-100 text-chelito-700 rounded-full flex items-center justify-center mx-auto mb-2 text-2xl">
+          💰
+        </div>
+        <h3 class="text-lg font-extrabold text-stone-900">¡Entró un dinero!</h3>
+        <p class="text-xs text-stone-500 mt-1">Cobro de honorarios, comisión por venta/alquiler, asesoría o pago de cliente.</p>
+      </div>
+
+      <form onsubmit="handleNewIncome(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Monto recibido (RD$)</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">RD$</span>
+            <input 
+              type="number" 
+              id="inputIncomeAmount" 
+              inputmode="decimal" 
+              placeholder="0.00"
+              required
+              class="w-full bg-stone-50 border-2 border-stone-200 focus:border-chelito-600 rounded-xl py-3 pl-14 pr-3 text-xl font-bold text-stone-800 outline-none"
+            >
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Concepto o cliente</label>
+          <input 
+            type="text" 
+            id="inputIncomeSource" 
+            placeholder="Ej: Cierre contrato inmueble, asesoría legal..."
+            required
+            class="w-full bg-stone-50 border border-stone-200 focus:border-chelito-600 rounded-xl py-2.5 px-3.5 text-sm font-semibold outline-none"
+          >
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" onclick="closeModal('addIncomeModal')" class="flex-1 py-3 bg-stone-100 text-stone-700 font-bold rounded-xl text-sm transition">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-3 bg-chelito-600 text-white font-bold rounded-xl text-sm shadow transition">
+            Sumar a mi Dinero
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Ajustar saldo actual -->
+  <div id="setBalanceModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl fade-enter border border-stone-100">
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-2 text-2xl">
+          🏦
+        </div>
+        <h3 class="text-lg font-extrabold text-stone-900">Ajustar Saldo Real</h3>
+        <p class="text-xs text-stone-500 mt-1">Si revisaste tu cuenta de banco o tu cartera, pon aquí exactamente cuánto dinero tienes hoy.</p>
+      </div>
+
+      <form onsubmit="handleSetBalance(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Total disponible hoy (RD$)</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold">RD$</span>
+            <input 
+              type="number" 
+              id="inputSetBalance" 
+              inputmode="decimal" 
+              placeholder="0.00"
+              required
+              class="w-full bg-stone-50 border-2 border-stone-200 focus:border-blue-600 rounded-xl py-3 pl-14 pr-3 text-xl font-bold text-stone-800 outline-none"
+            >
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" onclick="closeModal('setBalanceModal')" class="flex-1 py-3 bg-stone-100 text-stone-700 font-bold rounded-xl text-sm transition">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl text-sm shadow transition">
+            Fijar Saldo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Cambiar Nombre de Mamá -->
+  <div id="nameModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl fade-enter border border-stone-100">
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+          🌸
+        </div>
+        <h3 class="text-lg font-extrabold text-stone-900">¿Cómo te llamas?</h3>
+        <p class="text-xs text-stone-500 mt-1">Personaliza el saludo de la aplicación.</p>
+      </div>
+
+      <form onsubmit="saveName(event)" class="space-y-4">
+        <div>
+          <input 
+            type="text" 
+            id="inputUserName" 
+            placeholder="Kendis" 
+            required
+            class="w-full bg-stone-50 border-2 border-stone-200 focus:border-chelito-600 rounded-xl py-3 px-4 text-base font-bold text-stone-800 outline-none"
+          >
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" onclick="closeModal('nameModal')" class="flex-1 py-3 bg-stone-100 text-stone-700 font-bold rounded-xl text-sm">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-3 bg-chelito-600 text-white font-bold rounded-xl text-sm shadow">
+            Actualizar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Agregar Cuenta Fija -->
+  <div id="fixedModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl fade-enter">
+      <div class="text-center mb-4">
+        <h3 class="text-lg font-extrabold text-stone-900">Nueva Cuenta Fija Obligatoria</h3>
+        <p class="text-xs text-stone-500 mt-1">Gastos que sí o sí tienes que tener cubiertos en el mes.</p>
+      </div>
+
+      <form onsubmit="saveNewFixedExpense(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Nombre del compromiso</label>
+          <input type="text" id="newFixedTitle" placeholder="Ej: Luz, Internet, Mantenimiento, Cuota de préstamo" required class="w-full bg-stone-50 border border-stone-200 rounded-xl py-2.5 px-3 text-sm font-semibold outline-none focus:border-chelito-600">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Monto aproximado (RD$)</label>
+          <input type="number" id="newFixedAmount" placeholder="Ej: 3000" required class="w-full bg-stone-50 border border-stone-200 rounded-xl py-2.5 px-3 text-sm font-semibold outline-none focus:border-chelito-600">
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('fixedModal')" class="flex-1 py-2.5 bg-stone-100 text-stone-700 font-bold rounded-xl text-sm">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-2.5 bg-chelito-600 text-white font-bold rounded-xl text-sm shadow">
+            Guardar Fijo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Limpiar historial -->
+  <div id="resetModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl fade-enter text-center">
+      <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+        🗓️
+      </div>
+      <h3 class="text-lg font-extrabold text-stone-900">¿Limpiar historial de movimientos?</h3>
+      <p class="text-xs text-stone-500 mt-2 leading-relaxed">
+        Esto borrará la lista de gastos e ingresos anotados para refrescar la pantalla, pero mantendrá tu saldo actual y tu lista de cuentas fijas intactos.
+      </p>
+
+      <div class="flex gap-2 mt-5">
+        <button type="button" onclick="closeModal('resetModal')" class="flex-1 py-2.5 bg-stone-100 text-stone-700 font-bold rounded-xl text-sm">
+          No, regresar
+        </button>
+        <button type="button" onclick="confirmResetHistory()" class="flex-1 py-2.5 bg-rose-600 text-white font-bold rounded-xl text-sm shadow">
+          Sí, limpiar lista
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificación flotante (Toast amigable sin alerts) -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-5 py-3 rounded-full text-sm font-medium shadow-xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw]">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">Acción guardada</span>
+  </div>
+
+  <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
+  <script>
+    // Registro de Service Worker para capacidades PWA / Offline y Notificaciones
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        console.log('Service Worker activo:', reg.scope);
+      }).catch(err => {
+        console.log('Error registrando Service Worker:', err);
+      });
+    }
+
+    // Categorías dominicanas habituales con emojis claros
+    const CATEGORIES = [
+      { id: 'Supermercado', name: 'Super / Comida', icon: '🛒' },
+      { id: 'Servicios', name: 'Luz / Teléfono', icon: '💡' },
+      { id: 'Transporte', name: 'Gasolina / Pasaje', icon: '🚗' },
+      { id: 'Farmacia', name: 'Salud / Farmacia', icon: '💊' },
+      { id: 'Gustitos', name: 'Comidita / Antojo', icon: '🍽️' },
+      { id: 'Trabajo', name: 'Trámites / Notaría', icon: '⚖️' },
+    ];
+
+    // Cuentas fijas típicas para el hogar dominicano
+    const DEFAULT_FIXED = [
+      { id: '1', title: 'Luz (EDESUR / EDEESTE / EDENORTE)', amount: 2800, paid: false },
+      { id: '2', title: 'Internet y Celular (Claro / Altice)', amount: 2100, paid: false },
+      { id: '3', title: 'Gas Propano de la casa', amount: 950, paid: false },
+      { id: '4', title: 'Mantenimiento / Agua / Basura', amount: 1500, paid: false },
+    ];
+
+    let appState = {
+      userName: 'Kendis',
+      currentBalance: 42000,
+      transactions: [
+        { id: 101, type: 'income', amount: 25000, category: 'Honorarios', note: 'Comisión alquiler inmueble', date: 'Ayer' },
+        { id: 102, type: 'expense', amount: 3850, category: 'Supermercado', note: 'Compra en el supermercado', date: 'Hoy' },
+        { id: 103, type: 'expense', amount: 650, category: 'Farmacia', note: 'Medicamentos', date: 'Hace 2 días' }
+      ],
+      fixedExpenses: DEFAULT_FIXED,
+      letterVisible: true
+    };
+
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderCategoryButtons();
+      renderAll();
+      lucide.createIcons();
+      checkPendingRemindersNotification();
+    });
+
+    function saveState() {
+      try {
+        localStorage.setItem('chelito_kendis_freelance_db', JSON.stringify(appState));
+      } catch (e) {
+        console.error("No se pudo guardar localmente", e);
+      }
+    }
+
+    function loadState() {
+      const stored = localStorage.getItem('chelito_kendis_freelance_db');
+      if (stored) {
+        try {
+          appState = { ...appState, ...JSON.parse(stored) };
+        } catch (e) {
+          console.error("Error al leer datos previos", e);
+        }
+      }
+    }
+
+    function formatRD(num) {
+      return 'RD$ ' + Number(num || 0).toLocaleString('es-DO', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+    }
+
+    function renderAll() {
+      document.getElementById('headerNameDisplay').innerText = appState.userName;
+      document.getElementById('greetingTitle').innerText = `¡Hola, ${appState.userName}!`;
+      document.getElementById('inputUserName').value = appState.userName;
+
+      const letterBody = document.getElementById('letterBody');
+      const btnToggle = document.getElementById('btnToggleLetter');
+      if (appState.letterVisible) {
+        letterBody.classList.remove('hidden');
+        btnToggle.innerText = 'Ocultar';
+      } else {
+        letterBody.classList.add('hidden');
+        btnToggle.innerText = 'Leer carta';
+      }
+
+      document.getElementById('displayCurrentBalance').innerText = formatRD(appState.currentBalance);
+
+      const totalFixed = appState.fixedExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
+      const pendingFixed = appState.fixedExpenses
+        .filter(item => !item.paid)
+        .reduce((sum, item) => sum + Number(item.amount), 0);
+
+      document.getElementById('totalFixedAmount').innerText = formatRD(totalFixed);
+      document.getElementById('pendingFixedAmount').innerText = formatRD(pendingFixed);
+
+      updateFreelanceStatus(pendingFixed);
+      renderFixedExpenses();
+      renderHistory();
+      lucide.createIcons();
+    }
+
+    function updateFreelanceStatus(pendingFixed) {
+      const card = document.getElementById('freelanceStatusCard');
+      const emoji = document.getElementById('statusEmoji');
+      const title = document.getElementById('statusTitle');
+      const badge = document.getElementById('statusBadge');
+      const desc = document.getElementById('statusDescription');
+      const banner = document.getElementById('reminderAlertBanner');
+      const bannerText = document.getElementById('reminderAlertText');
+
+      const balance = Number(appState.currentBalance);
+
+      if (pendingFixed === 0) {
+        card.className = "p-4 rounded-2xl border bg-emerald-50 border-emerald-300 text-emerald-950";
+        emoji.innerText = "🎉";
+        title.innerText = "¡Cuentas fijas del mes 100% pagadas!";
+        badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800";
+        badge.innerText = "Todo al día";
+        desc.innerText = `Tienes ${formatRD(balance)} totalmente libres en mano para tu supermercado, salud, antojitos o guardar.`;
+        banner.classList.add('hidden');
+      } else if (balance >= pendingFixed) {
+        const libre = balance - pendingFixed;
+        card.className = "p-4 rounded-2xl border bg-teal-50 border-teal-200 text-teal-950";
+        emoji.innerText = "🛡️";
+        title.innerText = "Tus compromisos fijos están garantizados";
+        badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-teal-200 text-teal-800";
+        badge.innerText = "Segura";
+        desc.innerText = `Con lo que tienes hoy puedes saldar los ${formatRD(pendingFixed)} que quedan de cuentas fijas, y aún te sobran ${formatRD(libre)} libres.`;
+        banner.classList.remove('hidden');
+        bannerText.innerText = `Tienes ${formatRD(pendingFixed)} pendientes en cuentas fijas este mes`;
+      } else {
+        const falta = pendingFixed - balance;
+        card.className = "p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-950";
+        emoji.innerText = "⚖️";
+        title.innerText = "Prioridad: Cuentas fijas del mes";
+        badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900";
+        badge.innerText = "Paso a paso";
+        desc.innerText = `Tienes ${formatRD(balance)} en mano. Te faltan ${formatRD(falta)} para asegurar todos los compromisos fijos con tu próximo honorario o pago.`;
+        banner.classList.remove('hidden');
+        bannerText.innerText = `¡Ojo Kendis! Faltan cuentas fijas por cubrir (${formatRD(pendingFixed)})`;
+      }
+    }
+
+    function checkRemindersNow() {
+      const seccion = document.getElementById('seccionFijos');
+      seccion.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Notificaciones locales y en pantalla
+    function requestNotificationPermission() {
+      if (!('Notification' in window)) {
+        showToast("Tu navegador no soporta notificaciones de sistema", "ℹ️");
+        return;
+      }
+
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          showToast("¡Recordatorios activados para Kendis!", "🔔");
+          sendSystemNotification(
+            "🌱 Chelito Hogar", 
+            "¡Hola Kendis! Te recordaremos cuando tengas cuentas fijas pendientes de pagar."
+          );
+        } else {
+          showToast("Permiso de notificación no otorgado", "⚠️");
+        }
+      });
+    }
+
+    function sendSystemNotification(title, body) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_NOTIFICATION',
+              title: title,
+              body: body
+            });
+          } else {
+            new Notification(title, {
+              body: body,
+              icon: 'icon.svg'
+            });
+          }
+        } catch (e) {
+          console.warn('No se pudo enviar notificación de sistema:', e);
+        }
+      }
+    }
+
+    function checkPendingRemindersNotification() {
+      const pendingItems = appState.fixedExpenses.filter(item => !item.paid);
+      if (pendingItems.length > 0 && Notification.permission === 'granted') {
+        const nombres = pendingItems.slice(0, 2).map(i => i.title).join(', ');
+        sendSystemNotification(
+          `Recordatorio de Pagos (${pendingItems.length} pendientes)`,
+          `Kendis, recuerda revisar: ${nombres}${pendingItems.length > 2 ? ' y más...' : '.'}`
+        );
+      }
+    }
+
+    function renderCategoryButtons() {
+      const container = document.getElementById('categoryButtonsContainer');
+      container.innerHTML = '';
+      const selected = document.getElementById('selectedCategory').value;
+
+      CATEGORIES.forEach(cat => {
+        const isSelected = cat.id === selected;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => selectCategory(cat.id);
+        btn.className = `p-2.5 rounded-xl border flex flex-col items-center justify-center text-center transition active:scale-95 ${
+          isSelected 
+            ? 'bg-chelito-700 text-white border-chelito-700 ring-2 ring-chelito-400 font-bold shadow-sm' 
+            : 'bg-stone-50 border-stone-200 text-stone-700 hover:bg-stone-100'
+        }`;
+        btn.innerHTML = `
+          <span class="text-xl mb-1">${cat.icon}</span>
+          <span class="text-[11px] leading-tight font-medium">${cat.name}</span>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function selectCategory(catId) {
+      document.getElementById('selectedCategory').value = catId;
+      renderCategoryButtons();
+    }
+
+    function handleNewIncome(e) {
+      e.preventDefault();
+      const amountInput = document.getElementById('inputIncomeAmount');
+      const sourceInput = document.getElementById('inputIncomeSource');
+
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0) {
+        showToast("Por favor pon un monto válido", "⚠️");
+        return;
+      }
+
+      appState.currentBalance += amount;
+
+      const newTx = {
+        id: Date.now(),
+        type: 'income',
+        amount: amount,
+        category: 'Honorarios',
+        note: sourceInput.value.trim() || 'Cobro de honorario',
+        date: new Date().toLocaleDateString('es-DO', { day: 'numeric', month: 'short' })
+      };
+
+      appState.transactions.unshift(newTx);
+      saveState();
+      renderAll();
+
+      amountInput.value = '';
+      sourceInput.value = '';
+      closeModal('addIncomeModal');
+      showToast(`¡Excelente! Sumaste ${formatRD(amount)} a tu saldo`, "💰");
+    }
+
+    function handleSetBalance(e) {
+      e.preventDefault();
+      const val = parseFloat(document.getElementById('inputSetBalance').value);
+      if (val >= 0) {
+        appState.currentBalance = val;
+        saveState();
+        renderAll();
+        closeModal('setBalanceModal');
+        showToast("Saldo en mano actualizado", "🏦");
+      }
+    }
+
+    function handleQuickExpense(e) {
+      e.preventDefault();
+      const amountInput = document.getElementById('expenseAmount');
+      const noteInput = document.getElementById('expenseNote');
+      const category = document.getElementById('selectedCategory').value;
+
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0) {
+        showToast("Por favor pon un monto válido", "⚠️");
+        return;
+      }
+
+      appState.currentBalance = Math.max(0, appState.currentBalance - amount);
+
+      const newTx = {
+        id: Date.now(),
+        type: 'expense',
+        amount: amount,
+        category: category,
+        note: noteInput.value.trim() || 'Gasto registrado',
+        date: new Date().toLocaleDateString('es-DO', { day: 'numeric', month: 'short' })
+      };
+
+      appState.transactions.unshift(newTx);
+      saveState();
+      renderAll();
+
+      amountInput.value = '';
+      noteInput.value = '';
+      showToast(`Descontado: ${formatRD(amount)}`, "✅");
+    }
+
+    function renderFixedExpenses() {
+      const container = document.getElementById('fixedExpensesList');
+      container.innerHTML = '';
+
+      appState.fixedExpenses.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = `py-3 flex items-center justify-between gap-3 ${item.paid ? 'opacity-65 bg-emerald-50/50 px-2.5 rounded-xl' : ''}`;
+        row.innerHTML = `
+          <label class="flex items-center gap-3 cursor-pointer flex-1 select-none">
+            <input 
+              type="checkbox" 
+              ${item.paid ? 'checked' : ''} 
+              onchange="toggleFixedPaid(${index})" 
+              class="w-5 h-5 rounded-md text-chelito-600 focus:ring-chelito-500 border-stone-300 cursor-pointer"
+            >
+            <div>
+              <p class="text-sm font-semibold text-stone-800 ${item.paid ? 'line-through text-stone-500' : ''}">
+                ${item.title}
+              </p>
+              <p class="text-[11px] ${item.paid ? 'text-emerald-700 font-medium' : 'text-stone-400'}">
+                ${item.paid ? '✓ Pagado este mes' : 'Pendiente por pagar'}
+              </p>
+            </div>
+          </label>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-xs sm:text-sm text-stone-800">${formatRD(item.amount)}</span>
+            <button onclick="removeFixedExpense(${index})" class="text-stone-300 hover:text-stone-500 p-1" title="Quitar este fijo">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function toggleFixedPaid(index) {
+      const item = appState.fixedExpenses[index];
+      const willBePaid = !item.paid;
+      item.paid = willBePaid;
+
+      if (willBePaid) {
+        appState.currentBalance = Math.max(0, appState.currentBalance - item.amount);
+        appState.transactions.unshift({
+          id: Date.now(),
+          type: 'expense',
+          amount: item.amount,
+          category: 'Servicios',
+          note: `Pago de cuenta fija: ${item.title}`,
+          date: 'Hoy'
+        });
+        showToast(`Pagado ${item.title} y descontado de tu saldo`, "💡");
+      } else {
+        appState.currentBalance += item.amount;
+        showToast(`Marcado como pendiente de pago`, "↩️");
+      }
+
+      saveState();
+      renderAll();
+    }
+
+    function removeFixedExpense(index) {
+      appState.fixedExpenses.splice(index, 1);
+      saveState();
+      renderAll();
+      showToast("Compromiso fijo eliminado", "🗑️");
+    }
+
+    function saveNewFixedExpense(e) {
+      e.preventDefault();
+      const title = document.getElementById('newFixedTitle').value.trim();
+      const amount = parseFloat(document.getElementById('newFixedAmount').value);
+
+      if (title && amount) {
+        appState.fixedExpenses.push({
+          id: Date.now().toString(),
+          title: title,
+          amount: amount,
+          paid: false
+        });
+        saveState();
+        renderAll();
+        closeModal('fixedModal');
+        document.getElementById('newFixedTitle').value = '';
+        document.getElementById('newFixedAmount').value = '';
+        showToast("Cuenta fija añadida", "✅");
+      }
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('expenseHistoryList');
+      const emptyNotice = document.getElementById('emptyHistoryNotice');
+      const recordsBadge = document.getElementById('recordsBadge');
+      container.innerHTML = '';
+
+      recordsBadge.innerText = `${appState.transactions.length} items`;
+
+      if (appState.transactions.length === 0) {
+        emptyNotice.classList.remove('hidden');
+        return;
+      } else {
+        emptyNotice.classList.add('hidden');
+      }
+
+      appState.transactions.forEach(item => {
+        const isIncome = item.type === 'income';
+        const catObj = CATEGORIES.find(c => c.id === item.category) || { 
+          icon: isIncome ? '💰' : '🏷️', 
+          name: item.category 
+        };
+
+        const el = document.createElement('div');
+        el.className = `flex items-center justify-between p-3.5 rounded-xl border transition ${
+          isIncome ? 'bg-emerald-50/60 border-emerald-200' : 'bg-stone-50 hover:bg-stone-100/80 border-stone-200/70'
+        }`;
+        
+        el.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-1 bg-white rounded-lg shadow-xs">${isIncome ? '💰' : catObj.icon}</span>
+            <div>
+              <p class="font-bold text-stone-900 text-sm">${item.note}</p>
+              <div class="flex items-center gap-2 text-xs text-stone-500">
+                <span class="font-medium ${isIncome ? 'text-emerald-700' : 'text-stone-600'}">${item.category}</span>
+                <span>•</span>
+                <span>${item.date}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="font-extrabold text-sm sm:text-base ${isIncome ? 'text-emerald-700' : 'text-stone-800'}">
+              ${isIncome ? '+' : '-'}${formatRD(item.amount)}
+            </span>
+            <button onclick="deleteTransaction(${item.id})" title="Borrar este registro" class="p-1.5 text-stone-400 hover:text-rose-600 transition rounded-lg hover:bg-rose-50">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    function deleteTransaction(id) {
+      const tx = appState.transactions.find(t => t.id === id);
+      if (tx) {
+        if (tx.type === 'income') {
+          appState.currentBalance = Math.max(0, appState.currentBalance - tx.amount);
+        } else {
+          appState.currentBalance += tx.amount;
+        }
+      }
+
+      appState.transactions = appState.transactions.filter(t => t.id !== id);
+      saveState();
+      renderAll();
+      showToast("Registro borrado y saldo ajustado", "🗑️");
+    }
+
+    function openAddIncomeModal() {
+      document.getElementById('inputIncomeAmount').value = '';
+      document.getElementById('inputIncomeSource').value = '';
+      document.getElementById('addIncomeModal').classList.remove('hidden');
+    }
+
+    function openSetBalanceModal() {
+      document.getElementById('inputSetBalance').value = appState.currentBalance;
+      document.getElementById('setBalanceModal').classList.remove('hidden');
+    }
+
+    function openNameModal() {
+      document.getElementById('inputUserName').value = appState.userName;
+      document.getElementById('nameModal').classList.remove('hidden');
+    }
+
+    function saveName(e) {
+      e.preventDefault();
+      const name = document.getElementById('inputUserName').value.trim();
+      if (name) {
+        appState.userName = name;
+        saveState();
+        renderAll();
+        closeModal('nameModal');
+        showToast(`¡Hola de nuevo, ${name}!`, "🌸");
+      }
+    }
+
+    function openAddFixedModal() {
+      document.getElementById('fixedModal').classList.remove('hidden');
+    }
+
+    function openResetModal() {
+      document.getElementById('resetModal').classList.remove('hidden');
+    }
+
+    function confirmResetHistory() {
+      appState.transactions = [];
+      saveState();
+      renderAll();
+      closeModal('resetModal');
+      showToast("Historial despejado con éxito", "✨");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function toggleLetter() {
+      appState.letterVisible = !appState.letterVisible;
+      saveState();
+      renderAll();
+    }
+
+    function backupData() {
+      const dataStr = JSON.stringify(appState, null, 2);
+      const dummy = document.createElement("textarea");
+      document.body.appendChild(dummy);
+      dummy.value = dataStr;
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+
+      showToast("Respaldo copiado al portapapeles", "📋");
+    }
+
+    let toastTimeout;
+    function showToast(message, icon = "✨") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.innerText = message;
+      toastIcon.innerText = icon;
+
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
